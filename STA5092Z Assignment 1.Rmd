@@ -9,36 +9,43 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Libraries
+
+```{r}
+#install.packages("tidyverse")
+library(tidyverse)
+```
+
 # Read in data
 
 ```{r}
 # A1 & A2
-a12.2015 <- read.csv("./Data/A1_2_2015.csv")
-a12.2016 <- read.csv("./Data/A1_2_2016.csv")
-a12.2017 <- read.csv("./Data/A1_2_2017.csv")
-a12.2018 <- read.csv("./Data/A1_2_2018.csv")
-a12.2019 <- read.csv("./Data/A1_2_2019.csv")
-a12.2020 <- read.csv("./Data/A1_2_2020.csv")
-a12.2021 <- read.csv("./Data/A1_2_2021.csv")
-a12.2022 <- read.csv("./Data/A1_2_2022.csv")
+a12.2015 <- read.csv("./Data/A1_2_2015.csv") %>% as_tibble
+a12.2016 <- read.csv("./Data/A1_2_2016.csv") %>% as_tibble
+a12.2017 <- read.csv("./Data/A1_2_2017.csv") %>% as_tibble
+a12.2018 <- read.csv("./Data/A1_2_2018.csv") %>% as_tibble
+a12.2019 <- read.csv("./Data/A1_2_2019.csv") %>% as_tibble
+a12.2020 <- read.csv("./Data/A1_2_2020.csv") %>% as_tibble
+a12.2021 <- read.csv("./Data/A1_2_2021.csv") %>% as_tibble
+a12.2022 <- read.csv("./Data/A1_2_2022.csv") %>% as_tibble
 
 # B1
-b1.2015 <- read.csv("./Data/B1_2015.csv")
-b1.2016 <- read.csv("./Data/B1_2016.csv")
-b1.2017 <- read.csv("./Data/B1_2017.csv")
-b1.2018 <- read.csv("./Data/B1_2018.csv")
-b1.2019 <- read.csv("./Data/B1_2019.csv")
-b1.2020 <- read.csv("./Data/B1_2020.csv")
-b1.2021 <- read.csv("./Data/B1_2021.csv")
-b1.2022 <- read.csv("./Data/B1_2022.csv")
+b1.2015 <- read.csv("./Data/B1_2015.csv") %>% as_tibble
+b1.2016 <- read.csv("./Data/B1_2016.csv") %>% as_tibble
+b1.2017 <- read.csv("./Data/B1_2017.csv") %>% as_tibble
+b1.2018 <- read.csv("./Data/B1_2018.csv") %>% as_tibble
+b1.2019 <- read.csv("./Data/B1_2019.csv") %>% as_tibble
+b1.2020 <- read.csv("./Data/B1_2020.csv") %>% as_tibble
+b1.2021 <- read.csv("./Data/B1_2021.csv") %>% as_tibble
+b1.2022 <- read.csv("./Data/B1_2022.csv") %>% as_tibble
 
 # B2
-b2.2015 <- read.csv("./Data/B2_2015.csv")
-b2.2016 <- read.csv("./Data/B2_2016.csv")
-b2.2017 <- read.csv("./Data/B2_2017.csv")
-b2.2018 <- read.csv("./Data/B2_2018.csv")
-b2.2019 <- read.csv("./Data/B2_2019.csv")
-b2.2020 <- read.csv("./Data/B2_2020.csv")
-b2.2021 <- read.csv("./Data/B2_2021.csv")
-b2.2022 <- read.csv("./Data/B2_2022.csv")
+b2.2015 <- read.csv("./Data/B2_2015.csv") %>% as_tibble
+b2.2016 <- read.csv("./Data/B2_2016.csv") %>% as_tibble
+b2.2017 <- read.csv("./Data/B2_2017.csv") %>% as_tibble
+b2.2018 <- read.csv("./Data/B2_2018.csv") %>% as_tibble
+b2.2019 <- read.csv("./Data/B2_2019.csv") %>% as_tibble
+b2.2020 <- read.csv("./Data/B2_2020.csv") %>% as_tibble
+b2.2021 <- read.csv("./Data/B2_2021.csv") %>% as_tibble
+b2.2022 <- read.csv("./Data/B2_2022.csv") %>% as_tibble
 ```
