@@ -83,3 +83,10 @@ str(b2.2020)
 str(b2.2021)
 str(b2.2022)
 ```
+
+# Look at top and bottom of data
+
+```{r}
+head(a12.2015)
+tail(a12.2015)
+```
