@@ -90,3 +90,9 @@ str(b2.2022)
 head(a12.2015)
 tail(a12.2015)
 ```
+
+# Check total number of observations
+
+```{r}
+dim(a12.2015)
+```
