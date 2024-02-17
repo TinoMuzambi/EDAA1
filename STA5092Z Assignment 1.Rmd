@@ -49,3 +49,37 @@ b2.2020 <- read.csv("./Data/B2_2020.csv") %>% as_tibble
 b2.2021 <- read.csv("./Data/B2_2021.csv") %>% as_tibble
 b2.2022 <- read.csv("./Data/B2_2022.csv") %>% as_tibble
 ```
+
+# Checking the data
+
+```{r}
+print("A1_2")
+str(a12.2015)
+str(a12.2016)
+str(a12.2017)
+str(a12.2018)
+str(a12.2019)
+str(a12.2020)
+str(a12.2021)
+str(a12.2022)
+
+print("B1")
+str(b1.2015)
+str(b1.2016)
+str(b1.2017)
+str(b1.2018)
+str(b1.2019)
+str(b1.2020)
+str(b1.2021)
+str(b1.2022)
+
+print("B2")
+str(b2.2015)
+str(b2.2016)
+str(b2.2017)
+str(b2.2018)
+str(b2.2019)
+str(b2.2020)
+str(b2.2021)
+str(b2.2022)
+```
