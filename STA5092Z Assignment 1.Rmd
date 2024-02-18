@@ -83,6 +83,22 @@ str(b2.2020)
 str(b2.2021)
 str(b2.2022)
 ```
+# Merge into one tibble
+
+```{r}
+# First rename StudentID variable to ID
+a12.2015 <- a12.2015 %>%
+  rename(ID = StudentID)
+```
+
+```{r}
+undergraduate <- a12.2015
+undergraduate <- bind_rows(list(undergraduate, a12.2016, a12.2017, a12.2018, a12.2019, a12.2020, a12.2021, a12.2022,
+                                b1.2015, b1.2016, b1.2017, b1.2018, b1.2019, b1.2020, b1.2021, b1.2022,
+                                b2.2015, b2.2016, b2.2017, b2.2018, b2.2019, b2.2020, b2.2021, b2.2022))
+str(undergraduate)
+```
+
 
 # Look at top and bottom of data
 
