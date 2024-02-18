@@ -107,8 +107,40 @@ dim(b1.2020)
 dim(b2.2021)
 ```
 
-# Plot univariate summaries of the data
+# Create new grade column which has integers only
 
 ```{r}
 
+convertGrades <- function(data) {
+  return (data %>%
+            mutate(Grade = ifelse(grepl("^[0-9]+$", Grade), as.integer(Grade), ifelse(Grade == "UP", 50, 0))))
+}
+
+# If string value in grade is an integer, convert to integer, else check if it's UP, if so, replace with 50, else replace with 0
+a12.2015 <- convertGrades(a12.2015)
+a12.2016 <- convertGrades(a12.2016)
+a12.2017 <- convertGrades(a12.2017)
+a12.2018 <- convertGrades(a12.2018)
+a12.2019 <- convertGrades(a12.2019)
+a12.2020 <- convertGrades(a12.2020)
+a12.2021 <- convertGrades(a12.2021)
+a12.2022 <- convertGrades(a12.2022)
+
+b1.2015 <- convertGrades(b1.2015)
+b1.2016 <- convertGrades(b1.2016)
+b1.2017 <- convertGrades(b1.2017)
+b1.2018 <- convertGrades(b1.2018)
+b1.2019 <- convertGrades(b1.2019)
+b1.2020 <- convertGrades(b1.2020)
+b1.2021 <- convertGrades(b1.2021)
+b1.2022 <- convertGrades(b1.2022)
+
+b2.2015 <- convertGrades(b2.2015)
+b2.2016 <- convertGrades(b2.2016)
+b2.2017 <- convertGrades(b2.2017)
+b2.2018 <- convertGrades(b2.2018)
+b2.2019 <- convertGrades(b2.2019)
+b2.2020 <- convertGrades(b2.2020)
+b2.2021 <- convertGrades(b2.2021)
+b2.2022 <- convertGrades(b2.2022)
 ```
