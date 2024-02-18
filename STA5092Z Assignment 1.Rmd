@@ -89,10 +89,26 @@ str(b2.2022)
 ```{r}
 head(a12.2015)
 tail(a12.2015)
+
+head(b1.2020)
+tail(b1.2020)
+
+head(b2.2021)
+tail(b2.2021)
 ```
 
 # Check total number of observations
 
 ```{r}
 dim(a12.2015)
+
+dim(b1.2020)
+
+dim(b2.2021)
+```
+
+# Plot univariate summaries of the data
+
+```{r}
+
 ```
