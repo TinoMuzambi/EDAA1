@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Libraries
 
-```{r}
+```{r, echo=FALSE}
 #install.packages("tidyverse")
 library(tidyverse)
 ```
@@ -119,6 +119,117 @@ dim(undergraduate)
 
 # If string value in grade is an integer, convert to integer, else check if it's UP, if so, replace with 50, else replace with 0
 undergraduate <- undergraduate %>%
-            mutate(Nume.Grade = ifelse(grepl("^[0-9]+$", Grade), as.integer(Grade), ifelse(Grade == "UP", 50, 0)))
+            mutate(Num.Grade = ifelse(grepl("^[0-9]+$", Grade), as.integer(Grade), ifelse(Grade == "UP", 50, 0)))
 str(undergraduate)
 ```
+
+# 1. What is the total number and percentage of students for each year who pass both the 1st and the 2nd year courses in the same year?
+
+```{r}
+num.stu.per.year <- undergraduate %>%
+  group_by(Term) %>%
+  count()
+
+undergraduate %>%
+  filter(
+    ((Catalog.Nbr == "A1" & Num.Grade >= 50) & (Catalog.Nbr == "A2" & Num.Grade >= 50))) %>%
+  group_by(Term) %>%
+  summarise(n = n())
+
+undergraduate %>%
+  filter(
+    ((Catalog.Nbr == "B1" & Num.Grade >= 50) & (Catalog.Nbr == "B2" & Num.Grade >= 50))) %>%
+  group_by(Term) %>%
+  summarise(n = n())
+```
+
+# 2. Are there any outliers in the Grade variable? What is your definition of an outlier?
+
+```{r}
+grade.bar <- undergraduate %>%
+  ggplot(aes(Num.Grade)) +
+  geom_bar()
+grade.bar
+
+undergraduate %>%
+  summary()
+```
+
+# 3. Are there any obvious clusters in the Grade variable? i.e. more marks around 50%.
+
+```{r}
+grade.bar
+```
+
+# 4. What is the pass rate for the 1st and 2nd year courses for each year? Are there any differences between A1 and A2?
+
+```{r}
+passes.per.course <- undergraduate %>%
+  filter(Num.Grade >= 50) %>%
+  group_by(Catalog.Nbr) %>%
+  count()
+passes.per.course
+
+num.stu.per.course <- undergraduate %>%
+  group_by(Catalog.Nbr) %>%
+  count()
+
+pass.rate <- passes.per.course / num.stu.per.course
+pass.rate
+```
+
+# 5. How many students fail B1 even if they pass A1 or A2?
+
+```{r}
+
+```
+
+# 6. What would you suggest the minimum mark obtained should be from 1st year courses so that the student is able to pass B1?
+
+```{r}
+
+```
+
+# 7. What would you suggest the minimum mark obtained should be for B1 so that the student is able to pass B2?
+
+```{r}
+
+```
+
+
+# 8. Is there any hope for students with a UP (supplementary exam) for A1 or A2 to make it to the 3rd year of their studies without failing B1 and/or B2?
+
+```{r}
+
+```
+
+# 9. What is the correlation between the Grades of 1st and 2nd year courses?
+
+```{r}
+
+```
+
+# 10. Determine if answers for any of the above questions have been affected by Covid years? UCT has experienced other disasters, protests. Do you see any impact of these on your answers from one year to another?
+
+```{r}
+
+```
+
+# 11. What kind of an informed suggestion/advice one can make to a student who is registering for A1 or A2 for the first time? What would you look at to decide from the very beginning that the student will be successful in these courses?
+
+```{r}
+
+```
+
+# 12. ?
+
+```{r}
+
+```
+
+# 13. ?
+
+```{r}
+
+```
+
