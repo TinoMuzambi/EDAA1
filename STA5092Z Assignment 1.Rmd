@@ -119,6 +119,6 @@ dim(undergraduate)
 
 # If string value in grade is an integer, convert to integer, else check if it's UP, if so, replace with 50, else replace with 0
 undergraduate <- undergraduate %>%
-            mutate(Grade = ifelse(grepl("^[0-9]+$", Grade), as.integer(Grade), ifelse(Grade == "UP", 50, 0)))
+            mutate(Nume.Grade = ifelse(grepl("^[0-9]+$", Grade), as.integer(Grade), ifelse(Grade == "UP", 50, 0)))
 str(undergraduate)
 ```
