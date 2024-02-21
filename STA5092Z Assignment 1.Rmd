@@ -183,7 +183,17 @@ pass.rates.a12 <- undergraduate %>%
 # 5. How many students fail B1 even if they pass A1 or A2?
 
 ```{r}
+pass.a12 <- undergraduate %>% 
+  group_by(ID) %>% 
+  filter(Catalog.Nbr %in% c("A1", "A2")) %>% 
+  filter(Num.Grade >= 50)
 
+fail.b1 <- undergraduate %>% 
+  group_by(ID) %>% 
+  filter(Catalog.Nbr == "B1" & Num.Grade < 50)
+
+pass.a12.fail.b1 <- inner_join(pass.a12, fail.b1, by = "ID") %>% 
+  nrow()
 ```
 
 # 6. What would you suggest the minimum mark obtained should be from 1st year courses so that the student is able to pass B1?
