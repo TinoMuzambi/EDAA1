@@ -154,35 +154,30 @@ undergraduate %>%
 # 3. Are there any obvious clusters in the Grade variable? i.e. more marks around 50%.
 
 ```{r}
-grade.scatter <- undergraduate %>% 
+grade.density <- undergraduate %>% 
   ggplot(aes(Num.Grade)) +
   geom_density()
-grade.scatter
+grade.density
 ```
 
 # 4. What is the pass rate for the 1st and 2nd year courses for each year? Are there any differences between A1 and A2?
 
 ```{r}
-
-# Define a function to check if a course is in the 1st or 2nd year
-is_first_or_second_year <- function(course_nbr) {
-  return (grepl(".*2$", course_nbr))
-}
-
-undergrad.filter <- undergraduate[is_first_or_second_year(data$Catalog.Nbr), ]
-
-passes.per.course <- undergraduate %>%
+pass.rates.first.second <- undergraduate %>%
+  mutate(Course.Year = ifelse(Catalog.Nbr == "A1" | Catalog.Nbr == "A2", "First", "Second")) %>% 
+  group_by(Course.Year, Term) %>% 
+  mutate(Total.Number = n()) %>%
   filter(Num.Grade >= 50) %>%
-  group_by(Catalog.Nbr) %>%
-  count()
-passes.per.course
+  distinct(ID, .keep_all = TRUE) %>%
+  summarise(Total.Pass = n(), Perc.Pass = (n() / first(Total.Number)) * 100)
 
-num.stu.per.course <- undergraduate %>%
-  group_by(Catalog.Nbr) %>%
-  count()
-
-pass.rate <- passes.per.course$n / num.stu.per.course$n
-pass.rate
+pass.rates.a12 <- undergraduate %>%
+  group_by(Catalog.Nbr, Term) %>% 
+  filter(Catalog.Nbr == "A1" | Catalog.Nbr == "A2") %>% 
+  mutate(Total.Number = n()) %>%
+  filter(Num.Grade >= 50) %>%
+  distinct(ID, .keep_all = TRUE) %>%
+  summarise(Total.Pass = n(), Perc.Pass = (n() / first(Total.Number)) * 100)
 ```
 
 # 5. How many students fail B1 even if they pass A1 or A2?
