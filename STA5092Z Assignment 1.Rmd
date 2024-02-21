@@ -126,17 +126,12 @@ str(undergraduate)
 # 1. What is the total number and percentage of students for each year who pass both the 1st and the 2nd year courses in the same year?
 
 ```{r}
-coures.passed <- undergraduate %>%
-  group_by(ID, Term) %>%
-  summarise(NumCourses = n(), PassedCourses = sum(Num.Grade >= 50))
-
-courses.passed.same.year <- coures.passed %>%
-  filter(NumCourses == 2, PassedCourses == 2)
-
-result <- courses.passed.same.year %>%
+pass.both <- undergraduate %>%
   group_by(Term) %>%
-  summarise(TotalStudents = n(),
-            Percentage = (n() / nrow(undergraduate)) * 100)
+  mutate(Total.Number = n()) %>%
+  filter(Num.Grade >= 50) %>%
+  distinct(ID, .keep_all = TRUE) %>%
+  summarise(Total.Pass = n(), Perc.Pass = (n() / first(Total.Number)) * 100)
 ```
 
 # 2. Are there any outliers in the Grade variable? What is your definition of an outlier?
