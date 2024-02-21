@@ -119,37 +119,38 @@ dim(undergraduate)
 
 # If string value in grade is an integer, convert to integer, else check if it's UP, if so, replace with 50, else replace with 0
 undergraduate <- undergraduate %>%
-            mutate(Num.Grade = ifelse(grepl("^[0-9]+$", Grade), as.integer(Grade), ifelse(Grade == "UP", 50, 0)))
+            mutate(Num.Grade = ifelse(grepl("^[0-9]+$", Grade), as.integer(Grade), ifelse(Grade == "UP" | Grade == "PA", 50, 0)))
 str(undergraduate)
 ```
 
 # 1. What is the total number and percentage of students for each year who pass both the 1st and the 2nd year courses in the same year?
 
 ```{r}
-num.stu.per.year <- undergraduate %>%
-  group_by(Term) %>%
-  count()
+coures.passed <- undergraduate %>%
+  group_by(ID, Term) %>%
+  summarise(NumCourses = n(), PassedCourses = sum(Num.Grade >= 50))
 
-undergraduate %>%
-  filter(
-    ((Catalog.Nbr == "A1" & Num.Grade >= 50) & (Catalog.Nbr == "A2" & Num.Grade >= 50))) %>%
-  group_by(Term) %>%
-  summarise(n = n())
+courses.passed.same.year <- coures.passed %>%
+  filter(NumCourses == 2, PassedCourses == 2)
 
-undergraduate %>%
-  filter(
-    ((Catalog.Nbr == "B1" & Num.Grade >= 50) & (Catalog.Nbr == "B2" & Num.Grade >= 50))) %>%
+result <- courses.passed.same.year %>%
   group_by(Term) %>%
-  summarise(n = n())
+  summarise(TotalStudents = n(),
+            Percentage = (n() / nrow(undergraduate)) * 100)
 ```
 
 # 2. Are there any outliers in the Grade variable? What is your definition of an outlier?
 
 ```{r}
-grade.bar <- undergraduate %>%
+grade.box <- undergraduate %>%
   ggplot(aes(Num.Grade)) +
-  geom_bar()
-grade.bar
+  geom_boxplot()
+grade.box
+
+grade.hist <- undergraduate %>%
+  ggplot(aes(Num.Grade)) +
+  geom_histogram()
+grade.hist
 
 undergraduate %>%
   summary()
@@ -158,12 +159,23 @@ undergraduate %>%
 # 3. Are there any obvious clusters in the Grade variable? i.e. more marks around 50%.
 
 ```{r}
-grade.bar
+grade.scatter <- undergraduate %>% 
+  ggplot(aes(Num.Grade)) +
+  geom_density()
+grade.scatter
 ```
 
 # 4. What is the pass rate for the 1st and 2nd year courses for each year? Are there any differences between A1 and A2?
 
 ```{r}
+
+# Define a function to check if a course is in the 1st or 2nd year
+is_first_or_second_year <- function(course_nbr) {
+  return (grepl(".*2$", course_nbr))
+}
+
+undergrad.filter <- undergraduate[is_first_or_second_year(data$Catalog.Nbr), ]
+
 passes.per.course <- undergraduate %>%
   filter(Num.Grade >= 50) %>%
   group_by(Catalog.Nbr) %>%
@@ -174,7 +186,7 @@ num.stu.per.course <- undergraduate %>%
   group_by(Catalog.Nbr) %>%
   count()
 
-pass.rate <- passes.per.course / num.stu.per.course
+pass.rate <- passes.per.course$n / num.stu.per.course$n
 pass.rate
 ```
 
