@@ -199,7 +199,13 @@ pass.a12.fail.b1 <- inner_join(pass.a12, fail.b1, by = "ID") %>%
 # 6. What would you suggest the minimum mark obtained should be from 1st year courses so that the student is able to pass B1?
 
 ```{r}
+pass.b1 <- undergraduate %>% 
+  group_by(ID) %>% 
+  filter(Catalog.Nbr == "B1" & Num.Grade >= 50)
 
+pass.a12.pass.b1 <- right_join(pass.a12, pass.b1, by = "ID")
+min.mark <- pass.a12.pass.b1$Num.Grade.x %>% 
+  min(na.rm=T)
 ```
 
 # 7. What would you suggest the minimum mark obtained should be for B1 so that the student is able to pass B2?
