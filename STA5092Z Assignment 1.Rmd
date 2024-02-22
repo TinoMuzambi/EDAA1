@@ -184,41 +184,64 @@ pass.rates.a12 <- undergraduate %>%
 
 ```{r}
 pass.a12 <- undergraduate %>% 
-  group_by(ID) %>% 
-  filter(Catalog.Nbr %in% c("A1", "A2")) %>% 
-  filter(Num.Grade >= 50)
+  filter(Catalog.Nbr %in% c("A1", "A2") & Num.Grade >= 50) %>% 
+  distinct(ID)
 
 fail.b1 <- undergraduate %>% 
-  group_by(ID) %>% 
-  filter(Catalog.Nbr == "B1" & Num.Grade < 50)
+  filter(Catalog.Nbr == "B1" & Num.Grade < 50) %>% 
+  distinct(ID)
 
-pass.a12.fail.b1 <- inner_join(pass.a12, fail.b1, by = "ID") %>% 
-  nrow()
+pass.a12.fail.b1 <- intersect(pass.a12$ID, fail.b1$ID) %>% 
+  length()
 ```
 
 # 6. What would you suggest the minimum mark obtained should be from 1st year courses so that the student is able to pass B1?
 
 ```{r}
 pass.b1 <- undergraduate %>% 
-  group_by(ID) %>% 
-  filter(Catalog.Nbr == "B1" & Num.Grade >= 50)
+  filter(Catalog.Nbr == "B1" & Num.Grade >= 50) %>%
+  distinct(ID)
 
 pass.a12.pass.b1 <- right_join(pass.a12, pass.b1, by = "ID")
-min.mark <- pass.a12.pass.b1$Num.Grade.x %>% 
-  min(na.rm=T)
+min.mark <- min(pass.a12.pass.b1$Num.Grade.x, na.rm = TRUE)
 ```
 
 # 7. What would you suggest the minimum mark obtained should be for B1 so that the student is able to pass B2?
 
 ```{r}
+pass.b2 <- undergraduate %>% 
+  filter(Catalog.Nbr == "B2" & Num.Grade >= 50) %>%
+  distinct(ID)
 
+pass.b1.b2 <- intersect(pass.b1$ID, pass.b2$ID)
+
+pass.b1.b2.data <- undergraduate %>%
+  filter(ID %in% pass.b1.b2)
+
+min_mark.b1.b2 <- pass.b1.b2.data %>%
+  filter(Catalog.Nbr == "B1") %>%
+  summarise(min.mark = min(Num.Grade, na.rm = TRUE))
 ```
 
 
 # 8. Is there any hope for students with a UP (supplementary exam) for A1 or A2 to make it to the 3rd year of their studies without failing B1 and/or B2?
 
 ```{r}
+# Identify students with a UP for A1 or A2
+up.a1.a2 <- undergraduate %>%
+  filter((Catalog.Nbr %in% c("A1", "A2")) & (Grade == "UP")) %>%
+  distinct(ID)
 
+# Check if these students pass B1 and B2
+pass.b1.b2.up.a1.a2 <- undergraduate %>%
+  filter(ID %in% up.a1.a2$ID & (Catalog.Nbr %in% c("B1", "B2")) & Num.Grade >= 50) %>%
+  distinct(ID)
+
+# Calculate the number of students who passed B1 and B2 after having a UP for A1 or A2
+num.students <- nrow(pass.b1.b2.up.a1.a2)
+
+# Calculate the percentage of students who passed B1 and B2 after having a UP for A1 or A2
+percentage.pass <- (num.students / nrow(up.a1.a2)) * 100
 ```
 
 # 9. What is the correlation between the Grades of 1st and 2nd year courses?
