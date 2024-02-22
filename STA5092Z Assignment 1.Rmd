@@ -325,14 +325,20 @@ cat("Percentage of students who passed B1 and B2 after having a UP for A1 or A2:
 # 9. What is the correlation between the grades of 1st and 2nd year courses?
 
 ```{r}
-# Separate the grades for 1st and 2nd year courses
-a1.a2 <- undergraduate %>% 
+# Separate the grades for 1st and 2nd year courses.
+a1.b1 <- undergraduate %>% 
   filter(course %in% c("A1", "B1"))
+a2.b2 <- undergraduate %>% 
+  filter(course %in% c("A2", "B2"))
 
-merged.grades <- merge(a1.a2, b1.b2, by = "id", suffixes = c(".first", ".second"))
+# Join data to link 1st and 2nd year grades by student.
+merged.joined <- merge(a1.b1, 
+                       a2.b2, 
+                       by = "id", 
+                       suffixes = c(".first", ".second"))
 
-# Calculate the correlation
-correlation.first.second <- cor(merged.grades$num.grade.first, merged.grades$num.grade.second, use = "pairwise.complete.obs")
+# Calculate the correlation.
+correlation.first.second <- cor(merged.joined$num.grade.first, merged.joined$num.grade.second, use = "pairwise.complete.obs")
 cat("Correlation between the grades of 1st and 2nd year courses:", round(correlation, 2))
 ```
 
