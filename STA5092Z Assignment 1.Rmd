@@ -247,7 +247,16 @@ percentage.pass <- (num.students / nrow(up.a1.a2)) * 100
 # 9. What is the correlation between the Grades of 1st and 2nd year courses?
 
 ```{r}
+# Pivot the data to have 1st-year and 2nd-year grades as columns
+grades.pivot <- undergraduate %>%
+  pivot_wider(names_from = Catalog.Nbr, values_from = Num.Grade)
 
+# Filter out rows with missing values in A1 or B1
+filtered.data <- grades.pivot %>%
+  filter(!is.na(A1) | !is.na(B1))
+
+# Calculate the correlation between 1st and 2nd-year grades
+cor(filtered.data$A1, filtered.data$B1)
 ```
 
 # 10. Determine if answers for any of the above questions have been affected by Covid years? UCT has experienced other disasters, protests. Do you see any impact of these on your answers from one year to another?
@@ -262,15 +271,30 @@ percentage.pass <- (num.students / nrow(up.a1.a2)) * 100
 
 ```
 
-# 12. ?
+# 12. Are there any patterns or trends in the academic progress of students across different degrees over the years?
 
 ```{r}
+# Group data by year and degree, calculate average grade and pass rates
+degree_analysis <- undergraduate %>%
+  group_by(Term, Acad.Prog) %>%
+  summarise(Avg_Grade = mean(Num.Grade, na.rm = TRUE),
+            Pass_Rate = mean(Num.Grade >= 50, na.rm = TRUE) * 100)
 
+degree_analysis
 ```
 
-# 13. ?
+# 13. Can we identify any patterns or trends in the success rate of students who faced challenges in their first year but later excelled in subsequent years?
 
 ```{r}
+# Identify students who faced challenges in their first year
+challenged.first.year <- undergraduate %>%
+  filter(Term %in% c(2015, 2016, 2017) & Grade %in% c("DPR", "INC", "AB"))
 
+# Identify students who excelled in subsequent years
+excelled.subsequent.years <- undergraduate %>%
+  filter(Term %in% c(2018, 2019, 2020, 2021, 2022) & Num.Grade >= 50)
+
+# Find students who faced challenges in the first year but later excelled
+resilient.students <- inner_join(challenged.first.year, excelled.subsequent.years, by = "ID")
 ```
 
