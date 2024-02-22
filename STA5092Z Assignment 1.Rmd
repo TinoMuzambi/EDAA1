@@ -325,18 +325,17 @@ cat("Percentage of students who passed B1 and B2 after having a UP for A1 or A2:
 # 9. What is the correlation between the grades of 1st and 2nd year courses?
 
 ```{r}
-# REVISIT
-# Pivot the data to have 1st year and 2nd year grades as columns.
-grades.pivot <- undergraduate %>%
-  pivot_wider(names_from = course, values_from = num.grade)
+# Separate the grades for 1st and 2nd year courses
+a1.a2 <- undergraduate %>% 
+  filter(course %in% c("A1", "B1"))
 
-# Filter out rows with missing values in A1 or B1.
-filtered.data <- grades.pivot %>%
-  filter(!is.na(A1) | !is.na(B1))
+merged.grades <- merge(a1.a2, b1.b2, by = "id", suffixes = c(".first", ".second"))
 
-# Calculate the correlation between 1st and 2nd-year grades.
-cor(filtered.data$A1, filtered.data$B1)
+# Calculate the correlation
+correlation.first.second <- cor(merged.grades$num.grade.first, merged.grades$num.grade.second, use = "pairwise.complete.obs")
+cat("Correlation between the grades of 1st and 2nd year courses:", round(correlation, 2))
 ```
+
 
 # 10. Determine if answers for any of the above questions have been affected by Covid years? UCT has experienced other disasters, protests. Do you see any impact of these on your answers from one year to another?
 
