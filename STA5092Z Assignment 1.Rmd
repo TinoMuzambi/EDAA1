@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-# Read in data
+# Read in data.
 
 ```{r}
 # A1 & A2
@@ -50,9 +50,9 @@ b2.2021 <- read.csv("./Data/B2_2021.csv") %>% as_tibble
 b2.2022 <- read.csv("./Data/B2_2022.csv") %>% as_tibble
 ```
 
-# Checking the data
+# Checking the data.
 
-```{r}
+```{r, echo=FALSE}
 print("A1_2")
 str(a12.2015)
 str(a12.2016)
@@ -83,7 +83,7 @@ str(b2.2020)
 str(b2.2021)
 str(b2.2022)
 ```
-# Merge into one tibble
+# Merge into one tibble.
 
 ```{r}
 # First rename StudentID variable to ID
@@ -92,34 +92,45 @@ a12.2015 <- a12.2015 %>%
 ```
 
 ```{r}
-undergraduate <- a12.2015
-undergraduate <- bind_rows(list(undergraduate, a12.2016, a12.2017, a12.2018, a12.2019, a12.2020, a12.2021, a12.2022,
+undergraduate <- bind_rows(list(a12.2015, a12.2016, a12.2017, a12.2018, a12.2019, a12.2020, a12.2021, a12.2022,
                                 b1.2015, b1.2016, b1.2017, b1.2018, b1.2019, b1.2020, b1.2021, b1.2022,
                                 b2.2015, b2.2016, b2.2017, b2.2018, b2.2019, b2.2020, b2.2021, b2.2022))
 str(undergraduate)
 ```
 
+# Rename variables to more descriptive names.
 
-# Look at top and bottom of data
+```{r}
+undergraduate <- undergraduate %>% 
+  rename(year = Term,
+         course = Catalog.Nbr,
+         degree = Acad.Prog,
+         id = ID,
+         grade = Grade)
+str(undergraduate)
+```
+
+
+
+# Look at top and bottom of data.
 
 ```{r}
 head(undergraduate)
 tail(undergraduate)
 ```
 
-# Check total number of observations
+# Check total number of observations.
 
 ```{r}
 dim(undergraduate)
 ```
 
-# Create new grade column which has integers only
+# Create new grade column which has integers only.
 
 ```{r}
-
-# If string value in grade is an integer, convert to integer, else check if it's UP, if so, replace with 50, else replace with 0
+# If string value in grade is an integer, convert to integer, else check if it's UP, if so, replace with 50, else replace with 0.
 undergraduate <- undergraduate %>%
-            mutate(Num.Grade = ifelse(grepl("^[0-9]+$", Grade), as.integer(Grade), ifelse(Grade == "UP" | Grade == "PA", 50, 0)))
+            mutate(num.grade = ifelse(grepl("^[0-9]+$", grade), as.integer(grade), ifelse(grade == "UP" | grade == "PA", 50, 0)))
 str(undergraduate)
 ```
 
@@ -127,23 +138,25 @@ str(undergraduate)
 
 ```{r}
 pass.both <- undergraduate %>%
-  group_by(Term) %>%
-  mutate(Total.Number = n()) %>%
-  filter(Num.Grade >= 50) %>%
-  distinct(ID, .keep_all = TRUE) %>%
-  summarise(Total.Pass = n(), Perc.Pass = (n() / first(Total.Number)) * 100)
+  group_by(year) %>%
+  mutate(total.number = n()) %>%
+  filter(num.grade >= 50) %>%
+  distinct(id, .keep_all = TRUE) %>%
+  summarise(total.pass = n(), perc.pass = (n() / first(total.number)) * 100)
+
+pass.both
 ```
 
-# 2. Are there any outliers in the Grade variable? What is your definition of an outlier?
+# 2. Are there any outliers in the grade variable? What is your definition of an outlier?
 
 ```{r}
 grade.box <- undergraduate %>%
-  ggplot(aes(Num.Grade)) +
+  ggplot(aes(num.grade)) +
   geom_boxplot()
 grade.box
 
 grade.hist <- undergraduate %>%
-  ggplot(aes(Num.Grade)) +
+  ggplot(aes(num.grade)) +
   geom_histogram()
 grade.hist
 
@@ -151,11 +164,11 @@ undergraduate %>%
   summary()
 ```
 
-# 3. Are there any obvious clusters in the Grade variable? i.e. more marks around 50%.
+# 3. Are there any obvious clusters in the grade variable? i.e. more marks around 50%.
 
 ```{r}
 grade.density <- undergraduate %>% 
-  ggplot(aes(Num.Grade)) +
+  ggplot(aes(num.grade)) +
   geom_density()
 grade.density
 ```
@@ -164,114 +177,120 @@ grade.density
 
 ```{r}
 pass.rates.first.second <- undergraduate %>%
-  mutate(Course.Year = ifelse(Catalog.Nbr == "A1" | Catalog.Nbr == "A2", "First", "Second")) %>% 
-  group_by(Course.Year, Term) %>% 
-  mutate(Total.Number = n()) %>%
-  filter(Num.Grade >= 50) %>%
-  distinct(ID, .keep_all = TRUE) %>%
-  summarise(Total.Pass = n(), Perc.Pass = (n() / first(Total.Number)) * 100)
+  mutate(first.second = ifelse(course == "A1" | course == "A2", "First", "Second")) %>% 
+  group_by(first.second, year) %>% 
+  mutate(total.number = n()) %>%
+  filter(num.grade >= 50) %>%
+  distinct(id, .keep_all = TRUE) %>%
+  summarise(total.pass = n(), perc.pass = (n() / first(total.number)) * 100)
+pass.rates.first.second
 
 pass.rates.a12 <- undergraduate %>%
-  group_by(Catalog.Nbr, Term) %>% 
-  filter(Catalog.Nbr == "A1" | Catalog.Nbr == "A2") %>% 
-  mutate(Total.Number = n()) %>%
-  filter(Num.Grade >= 50) %>%
-  distinct(ID, .keep_all = TRUE) %>%
-  summarise(Total.Pass = n(), Perc.Pass = (n() / first(Total.Number)) * 100)
+  group_by(course, year) %>% 
+  filter(course == "A1" | course == "A2") %>% 
+  mutate(total.number = n()) %>%
+  filter(num.grade >= 50) %>%
+  distinct(id, .keep_all = TRUE) %>%
+  summarise(total.pass = n(), perc.pass = (n() / first(total.number)) * 100)
+pass.rates.a12
 ```
 
 # 5. How many students fail B1 even if they pass A1 or A2?
 
 ```{r}
 pass.a12 <- undergraduate %>% 
-  filter(Catalog.Nbr %in% c("A1", "A2") & Num.Grade >= 50) %>% 
-  distinct(ID)
+  filter(course %in% c("A1", "A2") & num.grade >= 50) %>% 
+  distinct(id, .keep_all=TRUE)
 
 fail.b1 <- undergraduate %>% 
-  filter(Catalog.Nbr == "B1" & Num.Grade < 50) %>% 
-  distinct(ID)
+  filter(course == "B1" & num.grade < 50) %>% 
+  distinct(id)
 
-pass.a12.fail.b1 <- intersect(pass.a12$ID, fail.b1$ID) %>% 
+pass.a12.fail.b1 <- intersect(pass.a12$id, fail.b1$id) %>% 
   length()
+pass.a12.fail.b1
 ```
 
 # 6. What would you suggest the minimum mark obtained should be from 1st year courses so that the student is able to pass B1?
 
 ```{r}
 pass.b1 <- undergraduate %>% 
-  filter(Catalog.Nbr == "B1" & Num.Grade >= 50) %>%
-  distinct(ID)
+  filter(course == "B1" & num.grade >= 50) %>%
+  distinct(id, .keep_all=TRUE)
 
-pass.a12.pass.b1 <- right_join(pass.a12, pass.b1, by = "ID")
-min.mark <- min(pass.a12.pass.b1$Num.Grade.x, na.rm = TRUE)
+pass.a12.pass.b1 <- right_join(pass.a12, pass.b1, by = "id")
+
+min.mark <- min(pass.a12.pass.b1$num.grade.x, na.rm = TRUE)
+min.mark
 ```
 
 # 7. What would you suggest the minimum mark obtained should be for B1 so that the student is able to pass B2?
 
 ```{r}
 pass.b2 <- undergraduate %>% 
-  filter(Catalog.Nbr == "B2" & Num.Grade >= 50) %>%
-  distinct(ID)
+  filter(course == "B2" & num.grade >= 50) %>%
+  distinct(id)
 
-pass.b1.b2 <- intersect(pass.b1$ID, pass.b2$ID)
+pass.b1.b2 <- intersect(pass.b1$id, pass.b2$id)
 
 pass.b1.b2.data <- undergraduate %>%
-  filter(ID %in% pass.b1.b2)
+  filter(id %in% pass.b1.b2)
 
 min_mark.b1.b2 <- pass.b1.b2.data %>%
-  filter(Catalog.Nbr == "B1") %>%
-  summarise(min.mark = min(Num.Grade, na.rm = TRUE))
+  filter(course == "B1") %>%
+  summarise(min.mark = min(num.grade, na.rm = TRUE))
+min_mark.b1.b2
 ```
 
 
 # 8. Is there any hope for students with a UP (supplementary exam) for A1 or A2 to make it to the 3rd year of their studies without failing B1 and/or B2?
 
 ```{r}
-# Identify students with a UP for A1 or A2
+# Identify students with a UP for A1 or A2.
 up.a1.a2 <- undergraduate %>%
-  filter((Catalog.Nbr %in% c("A1", "A2")) & (Grade == "UP")) %>%
-  distinct(ID)
+  filter((course %in% c("A1", "A2")) & (grade == "UP")) %>%
+  distinct(id)
 
-# Check if these students pass B1 and B2
+# Check if these students pass B1 and B2.
 pass.b1.b2.up.a1.a2 <- undergraduate %>%
-  filter(ID %in% up.a1.a2$ID & (Catalog.Nbr %in% c("B1", "B2")) & Num.Grade >= 50) %>%
-  distinct(ID)
+  filter(id %in% up.a1.a2$id & (course %in% c("B1", "B2")) & num.grade >= 50) %>%
+  distinct(id)
 
-# Calculate the number of students who passed B1 and B2 after having a UP for A1 or A2
+# Calculate the number of students who passed B1 and B2 after having a UP for A1 or A2.
 num.students <- nrow(pass.b1.b2.up.a1.a2)
 
-# Calculate the percentage of students who passed B1 and B2 after having a UP for A1 or A2
-percentage.pass <- (num.students / nrow(up.a1.a2)) * 100
+# Calculate the percentage of students who passed B1 and B2 after having a UP for A1 or A2.
+perc.pass <- (num.students / nrow(up.a1.a2)) * 100
+perc.pass
 ```
 
-# 9. What is the correlation between the Grades of 1st and 2nd year courses?
+# 9. What is the correlation between the grades of 1st and 2nd year courses?
 
 ```{r}
-# Pivot the data to have 1st-year and 2nd-year grades as columns
+# Pivot the data to have 1st year and 2nd year grades as columns.
 grades.pivot <- undergraduate %>%
-  pivot_wider(names_from = Catalog.Nbr, values_from = Num.Grade)
+  pivot_wider(names_from = course, values_from = num.grade)
 
-# Filter out rows with missing values in A1 or B1
+# Filter out rows with missing values in A1 or B1.
 filtered.data <- grades.pivot %>%
   filter(!is.na(A1) | !is.na(B1))
 
-# Calculate the correlation between 1st and 2nd-year grades
+# Calculate the correlation between 1st and 2nd-year grades.
 cor(filtered.data$A1, filtered.data$B1)
 ```
 
 # 10. Determine if answers for any of the above questions have been affected by Covid years? UCT has experienced other disasters, protests. Do you see any impact of these on your answers from one year to another?
 
 ```{r}
-# Define Covid year
-covid.year <- 2020
-
-# Compare pass rates between Covid year and non-Covid years
+# Compare pass rates between years.
 pass.rates.comparison <- undergraduate %>%
-  group_by(Catalog.Nbr, Term) %>%
-  summarise(Avg_Pass_Rate = mean(Num.Grade >= 50) * 100)
+  group_by(course, year) %>%
+  summarise(mean.pass.rate = mean(num.grade >= 50) * 100)
+pass.rates.comparison
 
-# Plot the comparison using ggplot2
-ggplot(pass.rates.comparison, aes(x = as.factor(Term), y = Avg_Pass_Rate, fill = as.factor(Term == covid.year))) +
+# Plot the comparison.
+pass.rates.comparison %>% 
+  ggplot(aes(x = as.factor(year), y = mean.pass.rate, fill = as.factor(year == 2020))) +
   geom_bar(stat = "identity", position = "dodge") +
   scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "blue"), guide = "none") +
   labs(title = "Pass Rates Comparison - Covid Year vs Non-Covid Years",
@@ -289,27 +308,28 @@ ggplot(pass.rates.comparison, aes(x = as.factor(Term), y = Avg_Pass_Rate, fill =
 # 12. Are there any patterns or trends in the academic progress of students across different degrees over the years?
 
 ```{r}
-# Group data by year and degree, calculate average grade and pass rates
-degree_analysis <- undergraduate %>%
-  group_by(Term, Acad.Prog) %>%
-  summarise(Avg_Grade = mean(Num.Grade, na.rm = TRUE),
-            Pass_Rate = mean(Num.Grade >= 50, na.rm = TRUE) * 100)
+# Group data by year and degree, calculate average grade and pass rates.
+degree.analysis <- undergraduate %>%
+  group_by(year, degree) %>%
+  summarise(mean.grade = mean(num.grade, na.rm = TRUE),
+            pass.rate = mean(num.grade >= 50, na.rm = TRUE) * 100)
 
-degree_analysis
+degree.analysis
 ```
 
 # 13. Can we identify any patterns or trends in the success rate of students who faced challenges in their first year but later excelled in subsequent years?
 
 ```{r}
-# Identify students who faced challenges in their first year
+# Identify students who faced challenges in their first year.
 challenged.first.year <- undergraduate %>%
-  filter(Term %in% c(2015, 2016, 2017) & Grade %in% c("DPR", "INC", "AB"))
+  filter(year %in% c(2015, 2016, 2017) & grade %in% c("DPR", "INC", "AB"))
 
-# Identify students who excelled in subsequent years
+# Identify students who excelled in subsequent years.
 excelled.subsequent.years <- undergraduate %>%
-  filter(Term %in% c(2018, 2019, 2020, 2021, 2022) & Num.Grade >= 50)
+  filter(year %in% c(2018, 2019, 2020, 2021, 2022) & num.grade >= 50)
 
-# Find students who faced challenges in the first year but later excelled
-resilient.students <- inner_join(challenged.first.year, excelled.subsequent.years, by = "ID")
+# Find students who faced challenges in the first year but later excelled.
+resilient.students <- inner_join(challenged.first.year, excelled.subsequent.years, by = "id")
+resilient.students
 ```
 
