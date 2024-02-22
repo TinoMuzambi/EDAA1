@@ -262,7 +262,22 @@ cor(filtered.data$A1, filtered.data$B1)
 # 10. Determine if answers for any of the above questions have been affected by Covid years? UCT has experienced other disasters, protests. Do you see any impact of these on your answers from one year to another?
 
 ```{r}
+# Define Covid year
+covid.year <- 2020
 
+# Compare pass rates between Covid year and non-Covid years
+pass.rates.comparison <- undergraduate %>%
+  group_by(Catalog.Nbr, Term) %>%
+  summarise(Avg_Pass_Rate = mean(Num.Grade >= 50) * 100)
+
+# Plot the comparison using ggplot2
+ggplot(pass.rates.comparison, aes(x = as.factor(Term), y = Avg_Pass_Rate, fill = as.factor(Term == covid.year))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "blue"), guide = "none") +
+  labs(title = "Pass Rates Comparison - Covid Year vs Non-Covid Years",
+       x = "Year",
+       y = "Average Pass Rate (%)") +
+  theme_minimal()
 ```
 
 # 11. What kind of an informed suggestion/advice one can make to a student who is registering for A1 or A2 for the first time? What would you look at to decide from the very beginning that the student will be successful in these courses?
