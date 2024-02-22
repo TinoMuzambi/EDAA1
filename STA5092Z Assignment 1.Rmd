@@ -297,7 +297,7 @@ b1.b2.joined <- merge(subset(b1.b2, course=="B1"),
 
 # Identify the minimum B1 grade passed by 75% of students who passed B2.
 print("Minimum suggested mark from B1 so that the student is able to pass B2:")
-quantile(df_joined$num.grade.x[df_joined$num.grade.y >= 50], 0.25)
+quantile(b1.b2.joined$num.grade.x[b1.b2.joined$num.grade.y >= 50], 0.25)
 ```
 
 
@@ -339,7 +339,7 @@ merged.joined <- merge(a1.b1,
 
 # Calculate the correlation.
 correlation.first.second <- cor(merged.joined$num.grade.first, merged.joined$num.grade.second, use = "pairwise.complete.obs")
-cat("Correlation between the grades of 1st and 2nd year courses:", round(correlation, 2))
+cat("Correlation between the grades of 1st and 2nd year courses:", round(correlation.first.second, 2))
 ```
 
 
