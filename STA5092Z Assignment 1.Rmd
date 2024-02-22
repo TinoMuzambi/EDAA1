@@ -137,29 +137,40 @@ str(undergraduate)
 # 1. What is the total number and percentage of students for each year who pass both the 1st and the 2nd year courses in the same year?
 
 ```{r}
+# Group data by year and find unique students who pass both the 1st and the 2nd year courses in the same year.
 pass.both <- undergraduate %>%
   group_by(year) %>%
   mutate(total.number = n()) %>%
   filter(num.grade >= 50) %>%
   distinct(id, .keep_all = TRUE) %>%
   summarise(total.pass = n(), perc.pass = (n() / first(total.number)) * 100)
-
 pass.both
+
+# Plot the results.
+ggplot(pass.both, aes(x = as.factor(year), y = perc.pass)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Percentage of Students Passing Both 1st and 2nd Year Courses",
+       x = "Year",
+       y = "Percentage of Students Passing (%)") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 # 2. Are there any outliers in the grade variable? What is your definition of an outlier?
 
 ```{r}
+# Plot box and whisker plot to view grade distribution.
 grade.box <- undergraduate %>%
   ggplot(aes(num.grade)) +
   geom_boxplot()
 grade.box
 
+# Plot histogram to view grade distribution.
 grade.hist <- undergraduate %>%
   ggplot(aes(num.grade)) +
   geom_histogram()
 grade.hist
 
+# Use summary to view grade distribution.
 undergraduate %>%
   summary()
 ```
@@ -167,6 +178,7 @@ undergraduate %>%
 # 3. Are there any obvious clusters in the grade variable? i.e. more marks around 50%.
 
 ```{r}
+# Plot density plot to view clustering of grades.
 grade.density <- undergraduate %>% 
   ggplot(aes(num.grade)) +
   geom_density()
@@ -176,6 +188,7 @@ grade.density
 # 4. What is the pass rate for the 1st and 2nd year courses for each year? Are there any differences between A1 and A2?
 
 ```{r}
+# Calculate pass rate for 1st and 2nd year courses group by year.
 pass.rates.first.second <- undergraduate %>%
   mutate(first.second = ifelse(course == "A1" | course == "A2", "First", "Second")) %>% 
   group_by(first.second, year) %>% 
@@ -185,6 +198,18 @@ pass.rates.first.second <- undergraduate %>%
   summarise(total.pass = n(), perc.pass = (n() / first(total.number)) * 100)
 pass.rates.first.second
 
+# Plot the results.
+ggplot(pass.rates.first.second, aes(x = as.factor(year), y = perc.pass, fill = first.second)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Pass Rates for 1st and 2nd Year Courses Grouped by Year",
+       x = "Year",
+       y = "Percentage of Students Passing (%)",
+       fill = "Year") +
+  scale_fill_manual(values = c("First" = "blue", "Second" = "red")) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Calculate pass rate for A1 and A2 group by year.
 pass.rates.a12 <- undergraduate %>%
   group_by(course, year) %>% 
   filter(course == "A1" | course == "A2") %>% 
@@ -193,33 +218,60 @@ pass.rates.a12 <- undergraduate %>%
   distinct(id, .keep_all = TRUE) %>%
   summarise(total.pass = n(), perc.pass = (n() / first(total.number)) * 100)
 pass.rates.a12
+
+# Plot the results.
+ggplot(pass.rates.a12, aes(x = as.factor(year), y = perc.pass, fill = course)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Pass Rates for A1 and A2 Courses Grouped by Year",
+       x = "Year",
+       y = "Percentage of Students Passing (%)",
+       fill = "Course") +
+  scale_fill_manual(values = c("A1" = "blue", "A2" = "red")) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 # 5. How many students fail B1 even if they pass A1 or A2?
 
 ```{r}
+# Get unique list of students who passed A1 or A2.
 pass.a12 <- undergraduate %>% 
   filter(course %in% c("A1", "A2") & num.grade >= 50) %>% 
   distinct(id, .keep_all=TRUE)
 
+# Get unique list of students who failed B1.
 fail.b1 <- undergraduate %>% 
   filter(course == "B1" & num.grade < 50) %>% 
   distinct(id)
 
+# Find intersection to get students who failed B1 even if they passed A1 or A2.
 pass.a12.fail.b1 <- intersect(pass.a12$id, fail.b1$id) %>% 
   length()
 pass.a12.fail.b1
+
+# Get number of students who took B1.
+num.b1 <- undergraduate %>% 
+  filter(course == "B1") %>% 
+  distinct(id) %>% 
+  nrow()
+
+# Calculate percentage of students who failed B1 even if they passed A1 or A2.
+b1.perc.fail <- (pass.a12.fail.b1 / num.b1) * 100
+b1.perc.fail
 ```
 
 # 6. What would you suggest the minimum mark obtained should be from 1st year courses so that the student is able to pass B1?
 
 ```{r}
+# Get unique list of students who passed B1.
 pass.b1 <- undergraduate %>% 
   filter(course == "B1" & num.grade >= 50) %>%
   distinct(id, .keep_all=TRUE)
 
+# Get list of students who passed A1 or A2 and B1.
 pass.a12.pass.b1 <- right_join(pass.a12, pass.b1, by = "id")
 
+# Find minimum mark
 min.mark <- min(pass.a12.pass.b1$num.grade.x, na.rm = TRUE)
 min.mark
 ```
@@ -227,15 +279,19 @@ min.mark
 # 7. What would you suggest the minimum mark obtained should be for B1 so that the student is able to pass B2?
 
 ```{r}
+# Get unique list of students who passed B2.
 pass.b2 <- undergraduate %>% 
   filter(course == "B2" & num.grade >= 50) %>%
   distinct(id)
 
+# Get intersection of those who passed B1 and B2.
 pass.b1.b2 <- intersect(pass.b1$id, pass.b2$id)
 
+# Get students who are in this intersection.
 pass.b1.b2.data <- undergraduate %>%
   filter(id %in% pass.b1.b2)
 
+# Find minimum mark.
 min_mark.b1.b2 <- pass.b1.b2.data %>%
   filter(course == "B1") %>%
   summarise(min.mark = min(num.grade, na.rm = TRUE))
@@ -313,6 +369,31 @@ degree.analysis <- undergraduate %>%
   group_by(year, degree) %>%
   summarise(mean.grade = mean(num.grade, na.rm = TRUE),
             pass.rate = mean(num.grade >= 50, na.rm = TRUE) * 100)
+
+# Plot the average grade.
+p.mean.grade <- degree.analysis %>% 
+  ggplot(aes(x = as.factor(year), y = mean.grade, color = degree)) +
+  geom_point() +
+  geom_line(aes(group = degree), linetype = "dashed") +
+  facet_wrap(~degree, scales = "free_y") +
+  labs(title = "Average Grade for Different Degrees Grouped by Year",
+       x = "Year",
+       y = "Average Grade",
+       color = "Degree") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
+
+# Plot the pass rate.
+p.pass.rate <- degree.analysis %>% 
+  ggplot(aes(x = as.factor(year), y = pass.rate, fill = degree)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~degree, scales = "free_y") +
+  labs(title = "Pass Rates for Different Degrees Grouped by Year",
+       x = "Year",
+       y = "Pass Rate (%)",
+       fill = "Degree") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
 
 degree.analysis
 ```
