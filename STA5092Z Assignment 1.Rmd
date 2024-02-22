@@ -261,43 +261,43 @@ b1.perc.fail <- (pass.a12.fail.b1 / num.b1) * 100
 cat("Percentage of students who failed B1 even if they passed A1 or A2:", round(b1.perc.fail, 2), "%\n")
 ```
 
+
 # 6. What would you suggest the minimum mark obtained should be from 1st year courses so that the student is able to pass B1?
 
 ```{r}
-# Get unique list of students who passed B1.
-pass.b1 <- undergraduate %>% 
-  filter(course == "B1" & num.grade >= 50) %>%
-  distinct(id, .keep_all=TRUE)
+# Filter to only 1st year and B1 courses.
+a1.a2.b1 <- undergraduate %>% 
+  filter(course %in% c("A1", "A2","B1"))
 
-# Get list of students who passed A1 or A2 and B1.
-pass.a12.pass.b1 <- right_join(pass.a12, pass.b1, by = "id")
+# Join data to link 1st and 2nd year grades by student.
+a1.a2.b1.joined <- merge(subset(a1.a2.b1, course %in% c("A1", "A2")),  
+                   subset(a1.a2.b1, course=="B1"), 
+                   by="id")
+                   
+# Take max of A1 and A2 grades for each student.
+a1.a2.b1.joined$a.grade <- pmax(a1.a2.b1.joined$num.grade.x, a1.a2.b1.joined$num.grade.y)
 
-# Find minimum mark
-min.mark.1st.year <- min(pass.a12.pass.b1$num.grade.x, na.rm = TRUE)
-cat("Minimum suggested mark from 1st year courses so that the student is able to pass B1:", min.mark.1st.year, "%")
+
+# Identify the minimum 1st year grade passed by 75% of students who passed B1.
+print("Minimum suggested mark from 1st year so that the student is able to pass B1:")
+quantile(a1.a2.b1.joined$a.grade[a1.a2.b1.joined$num.grade.y >= 50], 0.25)
 ```
 
 # 7. What would you suggest the minimum mark obtained should be for B1 so that the student is able to pass B2?
 
 ```{r}
-# REVISIT
-# Get unique list of students who passed B2.
-pass.b2 <- undergraduate %>% 
-  filter(course == "B2" & num.grade >= 50) %>%
-  distinct(id)
+# Filter to only B1 and B2 courses.
+b1.b2 <- undergraduate %>% 
+  filter(course %in% c("B1", "B2"))
 
-# Get intersection of those who passed B1 and B2.
-pass.b1.b2 <- intersect(pass.b1$id, pass.b2$id)
+# Join data to link B1 and B2 grades by student.
+b1.b2.joined <- merge(subset(b1.b2, course=="B1"), 
+                   subset(b1.b2, course=="B2"),
+                   by="id")
 
-# Get students who are in this intersection.
-pass.b1.b2.data <- undergraduate %>%
-  filter(id %in% pass.b1.b2)
-
-# Find minimum mark.
-min_mark.b1 <- pass.b1.b2.data %>%
-  filter(course == "B1") %>%
-  summarise(min.mark = min(num.grade, na.rm = TRUE))
-cat("Minimum suggested mark from B1 so that the student is able to pass B2:", min_mark.b1$min.mark, "%")
+# Identify the minimum B1 grade passed by 75% of students who passed B2.
+print("Minimum suggested mark from B1 so that the student is able to pass B2:")
+quantile(df_joined$num.grade.x[df_joined$num.grade.y >= 50], 0.25)
 ```
 
 
