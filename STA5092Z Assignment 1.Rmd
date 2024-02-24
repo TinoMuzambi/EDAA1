@@ -184,8 +184,8 @@ ggplot(pass.both, aes(x = as.factor(year), y = perc.pass)) +
 grade.box <- undergraduate %>%
   ggplot(aes(grade)) +
   geom_boxplot() +
-  labs(title = "Boxplot of Numerical Grade",
-       x = "Numerical Grade (%)") +
+  labs(title = "Boxplot of Grade",
+       x = "Grade (%)") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 grade.box
@@ -194,8 +194,8 @@ grade.box
 grade.hist <- undergraduate %>%
   ggplot(aes(grade)) +
   geom_histogram() +
-  labs(title = "Histogram of Numerical Grade Distribution",
-       x = "Numerical Grade (%)",
+  labs(title = "Histogram of Grade Distribution",
+       x = "Grade (%)",
        y = "Count") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
@@ -213,8 +213,8 @@ undergraduate %>%
 grade.density <- undergraduate %>% 
   ggplot(aes(grade)) +
   geom_density() +
-  labs(title = "Density of Numerical Grade",
-       x = "Numerical Grade (%)",
+  labs(title = "Density of Grade",
+       x = "Grade (%)",
        y = "Density") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
