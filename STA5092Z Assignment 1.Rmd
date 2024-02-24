@@ -166,7 +166,7 @@ str(undergraduate)
 pass.both <- undergraduate %>%
   group_by(year) %>%
   mutate(total.number = n()) %>%
-  filter(num.grade >= 50) %>%
+  filter(grade >= 50) %>%
   distinct(id, .keep_all = TRUE) %>%
   summarise(total.pass = n(), perc.pass = (n() / first(total.number)) * 100)
 pass.both
@@ -185,7 +185,7 @@ ggplot(pass.both, aes(x = as.factor(year), y = perc.pass)) +
 ```{r}
 # Plot box and whisker plot to view grade distribution.
 grade.box <- undergraduate %>%
-  ggplot(aes(num.grade)) +
+  ggplot(aes(grade)) +
   geom_boxplot() +
   labs(title = "Boxplot of Numerical Grade",
        x = "Numerical Grade (%)") +
@@ -195,7 +195,7 @@ grade.box
 
 # Plot histogram to view grade distribution.
 grade.hist <- undergraduate %>%
-  ggplot(aes(num.grade)) +
+  ggplot(aes(grade)) +
   geom_histogram() +
   labs(title = "Histogram of Numerical Grade Distribution",
        x = "Numerical Grade (%)",
@@ -214,7 +214,7 @@ undergraduate %>%
 ```{r}
 # Plot density plot to view clustering of grades.
 grade.density <- undergraduate %>% 
-  ggplot(aes(num.grade)) +
+  ggplot(aes(grade)) +
   geom_density() +
   labs(title = "Density of Numerical Grade",
        x = "Numerical Grade (%)",
@@ -232,7 +232,7 @@ pass.rates.first.second <- undergraduate %>%
   mutate(first.second = ifelse(course == "A1" | course == "A2", "First", "Second")) %>% 
   group_by(first.second, year) %>% 
   mutate(total.number = n()) %>%
-  filter(num.grade >= 50) %>%
+  filter(grade >= 50) %>%
   distinct(id, .keep_all = TRUE) %>%
   summarise(total.pass = n(), perc.pass = (n() / first(total.number)) * 100)
 pass.rates.first.second
@@ -253,7 +253,7 @@ pass.rates.a12 <- undergraduate %>%
   group_by(course, year) %>% 
   filter(course == "A1" | course == "A2") %>% 
   mutate(total.number = n()) %>%
-  filter(num.grade >= 50) %>%
+  filter(grade >= 50) %>%
   distinct(id, .keep_all = TRUE) %>%
   summarise(total.pass = n(), perc.pass = (n() / first(total.number)) * 100)
 pass.rates.a12
@@ -275,12 +275,12 @@ ggplot(pass.rates.a12, aes(x = as.factor(year), y = perc.pass, fill = course)) +
 ```{r}
 # Get unique list of students who passed A1 or A2.
 pass.a12 <- undergraduate %>% 
-  filter(course %in% c("A1", "A2") & num.grade >= 50) %>% 
+  filter(course %in% c("A1", "A2") & grade >= 50) %>% 
   distinct(id, .keep_all=TRUE)
 
 # Get unique list of students who failed B1.
 fail.b1 <- undergraduate %>% 
-  filter(course == "B1" & num.grade < 50) %>% 
+  filter(course == "B1" & grade < 50) %>% 
   distinct(id)
 
 # Find intersection to get students who failed B1 even if they passed A1 or A2.
@@ -314,12 +314,12 @@ a1.a2.b1.joined <- merge(subset(a1.a2.b1, course %in% c("A1", "A2")),
                    by="id")
                    
 # Take max of A1 and A2 grades for each student.
-a1.a2.b1.joined$a.grade <- pmax(a1.a2.b1.joined$num.grade.x, a1.a2.b1.joined$num.grade.y)
+a1.a2.b1.joined$a.grade <- pmax(a1.a2.b1.joined$grade.x, a1.a2.b1.joined$grade.y)
 
 
 # Identify the minimum 1st year grade passed by 75% of students who passed B1.
 print("Minimum suggested mark from 1st year so that the student is able to pass B1:")
-quantile(a1.a2.b1.joined$a.grade[a1.a2.b1.joined$num.grade.y >= 50], 0.25)
+quantile(a1.a2.b1.joined$a.grade[a1.a2.b1.joined$grade.y >= 50], 0.25)
 ```
 
 # 7. What would you suggest the minimum mark obtained should be for B1 so that the student is able to pass B2?
@@ -336,7 +336,7 @@ b1.b2.joined <- merge(subset(b1.b2, course=="B1"),
 
 # Identify the minimum B1 grade passed by 75% of students who passed B2.
 print("Minimum suggested mark from B1 so that the student is able to pass B2:")
-quantile(b1.b2.joined$num.grade.x[b1.b2.joined$num.grade.y >= 50], 0.25)
+quantile(b1.b2.joined$grade.x[b1.b2.joined$grade.y >= 50], 0.25)
 ```
 
 
@@ -350,7 +350,7 @@ up.a1.a2 <- undergraduate %>%
 
 # Check if these students pass B1 and B2.
 pass.b1.b2.up.a1.a2 <- undergraduate %>%
-  filter(id %in% up.a1.a2$id & (course %in% c("B1", "B2")) & num.grade >= 50) %>%
+  filter(id %in% up.a1.a2$id & (course %in% c("B1", "B2")) & grade >= 50) %>%
   distinct(id)
 
 # Calculate the number of students who passed B1 and B2 after having a UP for A1 or A2.
@@ -377,7 +377,7 @@ merged.joined <- merge(a1.b1,
                        suffixes = c(".first", ".second"))
 
 # Calculate the correlation.
-correlation.first.second <- cor(merged.joined$num.grade.first, merged.joined$num.grade.second, use = "pairwise.complete.obs")
+correlation.first.second <- cor(merged.joined$grade.first, merged.joined$grade.second, use = "pairwise.complete.obs")
 cat("Correlation between the grades of 1st and 2nd year courses:", round(correlation.first.second, 2))
 ```
 
@@ -388,7 +388,7 @@ cat("Correlation between the grades of 1st and 2nd year courses:", round(correla
 # Compare pass rates between years.
 pass.rates.comparison <- undergraduate %>%
   group_by(course, year) %>%
-  summarise(mean.pass.rate = mean(num.grade >= 50) * 100)
+  summarise(mean.pass.rate = mean(grade >= 50) * 100)
 pass.rates.comparison
 
 # Plot the comparison.
@@ -415,8 +415,8 @@ pass.rates.comparison %>%
 # Group data by year and degree, calculate average grade and pass rates.
 degree.analysis <- undergraduate %>%
   group_by(year, degree) %>%
-  summarise(mean.grade = mean(num.grade, na.rm = TRUE),
-            pass.rate = mean(num.grade >= 50, na.rm = TRUE) * 100)
+  summarise(mean.grade = mean(grade, na.rm = TRUE),
+            pass.rate = mean(grade >= 50, na.rm = TRUE) * 100)
 degree.analysis
 
 # Plot the average grade.
@@ -456,7 +456,7 @@ challenged.first.year <- undergraduate %>%
 
 # Identify students who excelled in subsequent years.
 excelled.subsequent.years <- undergraduate %>%
-  filter(year %in% c(2018, 2019, 2020, 2021, 2022) & num.grade >= 50)
+  filter(year %in% c(2018, 2019, 2020, 2021, 2022) & grade >= 50)
 
 # Find students who faced challenges in the first year but later excelled.
 resilient.students <- inner_join(challenged.first.year, excelled.subsequent.years, by = "id")
