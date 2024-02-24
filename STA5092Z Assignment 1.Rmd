@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, echo=FALSE}
 #install.packages("tidyverse")
 library(tidyverse)
+library(naniar)
 ```
 
 # Read in data.
@@ -104,20 +105,6 @@ undergraduate <- bind_rows(list(a12.2015, a12.2016, a12.2017, a12.2018, a12.2019
 str(undergraduate)
 ```
 
-# Rename variables to more descriptive names.
-
-```{r}
-undergraduate <- undergraduate %>% 
-  rename(year = Term,
-         course = Catalog.Nbr,
-         degree = Acad.Prog,
-         id = ID,
-         grade = Grade)
-str(undergraduate)
-```
-
-
-
 # Look at top and bottom of data.
 
 ```{r}
@@ -131,12 +118,44 @@ tail(undergraduate)
 dim(undergraduate)
 ```
 
-# Create new grade column which has integers only.
+# Rename variables to more descriptive names.
 
 ```{r}
-# If string value in grade is an integer, convert to integer, else check if it's UP, if so, replace with 50, else replace with 0.
+undergraduate <- undergraduate %>% 
+  rename(year = Term,
+         course = Catalog.Nbr,
+         degree = Acad.Prog,
+         id = ID,
+         grade = Grade)
+str(undergraduate)
+```
+
+# Create new code column which has pass codes only and only keep numeric grades in grade column.
+
+```{r}
+# Create a new column with codes and NAs for numerical grades.
 undergraduate <- undergraduate %>%
-            mutate(num.grade = ifelse(grepl("^[0-9]+$", grade), as.integer(grade), ifelse(grade == "UP" | grade == "PA", 50, 0)))
+  mutate(code = ifelse(grepl("^[0-9]+$", grade), NA, grade))
+
+# Create vector of grade codes.
+codes.to.replace <- c("DPR", "INC", "UP", "AB", "PA", "F", "LOA")
+
+# Create vector of grades that were absent for the exam e.g 45A 
+grades <- as.character(undergraduate$grade)
+pattern <- "^\\d+[A]$" # Matches any number of digits followed by A
+
+# Create vector of matching grades
+a.grades <- grades[grepl(pattern, grades)]
+
+# Replace all codes with NAs
+undergraduate <- undergraduate %>%
+  replace_with_na(replace = list(grade = codes.to.replace)) %>% 
+  replace_with_na(replace = list(grade = a.grades))
+
+# Convert grade to numerical type (assuming remaining values are numerical).
+undergraduate <- undergraduate %>%
+  mutate(grade = as.numeric(grade, errors = 'coerce'))
+
 str(undergraduate)
 ```
 
