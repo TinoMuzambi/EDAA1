@@ -420,7 +420,7 @@ degree.analysis
 p.mean.grade <- degree.analysis %>% 
   ggplot(aes(x = as.factor(year), y = mean.grade, color = degree)) +
   geom_point() +
-  geom_line(aes(group = degree), linetype = "dashed") +
+  geom_line(aes(group = degree)) +
   facet_wrap(~degree, scales = "free_y") +
   labs(title = "Average Grade for Different Degrees Grouped by Year",
        x = "Year",
@@ -449,7 +449,7 @@ p.pass.rate
 ```{r}
 # Identify students who faced challenges in their first year.
 challenged.first.year <- undergraduate %>%
-  filter(year %in% c(2015, 2016, 2017) & grade %in% c("DPR", "INC", "AB"))
+  filter(year %in% c(2015, 2016, 2017) & code %in% c("DPR", "INC", "AB"))
 
 # Identify students who excelled in subsequent years.
 excelled.subsequent.years <- undergraduate %>%
