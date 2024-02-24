@@ -167,13 +167,22 @@ ggplot(pass.both, aes(x = as.factor(year), y = perc.pass)) +
 # Plot box and whisker plot to view grade distribution.
 grade.box <- undergraduate %>%
   ggplot(aes(num.grade)) +
-  geom_boxplot()
+  geom_boxplot() +
+  labs(title = "Boxplot of Numerical Grade",
+       x = "Numerical Grade (%)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 grade.box
 
 # Plot histogram to view grade distribution.
 grade.hist <- undergraduate %>%
   ggplot(aes(num.grade)) +
-  geom_histogram()
+  geom_histogram() +
+  labs(title = "Histogram of Numerical Grade Distribution",
+       x = "Numerical Grade (%)",
+       y = "Count") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 grade.hist
 
 # Use summary to view grade distribution.
@@ -187,7 +196,12 @@ undergraduate %>%
 # Plot density plot to view clustering of grades.
 grade.density <- undergraduate %>% 
   ggplot(aes(num.grade)) +
-  geom_density()
+  geom_density() +
+  labs(title = "Density of Numerical Grade",
+       x = "Numerical Grade (%)",
+       y = "Density") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 grade.density
 ```
 
@@ -211,7 +225,7 @@ ggplot(pass.rates.first.second, aes(x = as.factor(year), y = perc.pass, fill = f
        x = "Year",
        y = "Percentage of Students Passing (%)",
        fill = "Year") +
-  scale_fill_manual(values = c("First" = "blue", "Second" = "red")) +
+  scale_fill_manual(values = c("First" = "blue", "Second" = "red"), name = "Course Year") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -362,7 +376,7 @@ pass.rates.comparison
 pass.rates.comparison %>% 
   ggplot(aes(x = as.factor(year), y = mean.pass.rate, fill = as.factor(year == 2020))) +
   geom_bar(stat = "identity", position = "dodge") +
-  scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "blue"), guide = "none") +
+  scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "grey"), guide = "none") +
   labs(title = "Pass Rates Comparison - Covid Year vs Non-Covid Years",
        x = "Year",
        y = "Average Pass Rate (%)") +
@@ -394,10 +408,11 @@ p.mean.grade <- degree.analysis %>%
   facet_wrap(~degree, scales = "free_y") +
   labs(title = "Average Grade for Different Degrees Grouped by Year",
        x = "Year",
-       y = "Average Grade",
+       y = "Average Grade (%)",
        color = "Degree") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
+p.mean.grade
 
 # Plot the pass rate.
 p.pass.rate <- degree.analysis %>% 
@@ -410,6 +425,7 @@ p.pass.rate <- degree.analysis %>%
        fill = "Degree") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
+p.pass.rate
 ```
 
 # 13. Can we identify any patterns or trends in the success rate of students who faced challenges in their first year but later excelled in subsequent years?
