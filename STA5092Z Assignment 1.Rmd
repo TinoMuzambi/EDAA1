@@ -137,19 +137,18 @@ str(undergraduate)
 undergraduate <- undergraduate %>%
   mutate(code = ifelse(grepl("^[0-9]+$", grade), NA, grade))
 
-# Create vectors of matching grades
+# Create vectors of passing and failing codes.
 failing.grades <- c("DPR", "INC", "AB", "F", "LOA")
 passing.grades <- c("UP","PA")
 
 # Replace codes with 0s and 50s
-# Replace codes with appropriate values (consider using loop for efficiency)
 undergraduate <- undergraduate %>%
   mutate(grade = ifelse(grade %in% failing.grades, 0,
                         ifelse(grade %in% passing.grades, 50, 
                                ifelse(grepl("^[0-9]+A$", grade),50,grade)))
   )
 
-# Convert grade to numerical type (assuming remaining values are numerical).
+# Convert grade to numerical type.
 undergraduate <- undergraduate %>%
   mutate(grade = as.numeric(grade, errors = 'coerce'))
 
