@@ -319,7 +319,7 @@ a1.a2.b1.joined$a.grade <- pmax(a1.a2.b1.joined$grade.x, a1.a2.b1.joined$grade.y
 
 # Identify the minimum 1st year grade passed by 75% of students who passed B1.
 print("Minimum suggested mark from 1st year so that the student is able to pass B1:")
-quantile(a1.a2.b1.joined$a.grade[a1.a2.b1.joined$grade.y >= 50], 0.25)
+quantile(a1.a2.b1.joined$a.grade[a1.a2.b1.joined$grade.y >= 50], 0.25, na.rm = TRUE)
 ```
 
 # 7. What would you suggest the minimum mark obtained should be for B1 so that the student is able to pass B2?
@@ -336,7 +336,7 @@ b1.b2.joined <- merge(subset(b1.b2, course=="B1"),
 
 # Identify the minimum B1 grade passed by 75% of students who passed B2.
 print("Minimum suggested mark from B1 so that the student is able to pass B2:")
-quantile(b1.b2.joined$grade.x[b1.b2.joined$grade.y >= 50], 0.25)
+quantile(b1.b2.joined$grade.x[b1.b2.joined$grade.y >= 50], 0.25, na.rm = TRUE)
 ```
 
 
@@ -345,7 +345,7 @@ quantile(b1.b2.joined$grade.x[b1.b2.joined$grade.y >= 50], 0.25)
 ```{r}
 # Identify students with a UP for A1 or A2.
 up.a1.a2 <- undergraduate %>%
-  filter((course %in% c("A1", "A2")) & (grade == "UP")) %>%
+  filter((course %in% c("A1", "A2")) & (code == "UP")) %>%
   distinct(id)
 
 # Check if these students pass B1 and B2.
