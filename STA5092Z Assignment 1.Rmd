@@ -138,7 +138,7 @@ undergraduate <- undergraduate %>%
   mutate(code = ifelse(grepl("^[0-9]+$", grade), NA, grade))
 
 # Create vector of grade codes.
-codes.to.replace <- c("DPR", "INC", "UP", "AB", "PA", "F", "LOA")
+codes.to.replace <- c("DPR", "DE", "INC", "UP", "AB", "PA", "F", "LOA")
 
 # Create vector of grades that were absent for the exam e.g 45A 
 grades <- as.character(undergraduate$grade)
@@ -183,6 +183,10 @@ ggplot(pass.both, aes(x = as.factor(year), y = perc.pass)) +
 # 2. Are there any outliers in the grade variable? What is your definition of an outlier?
 
 ```{r}
+# Use summary to view grade distribution.
+undergraduate %>%
+  summary()
+
 # Plot box and whisker plot to view grade distribution.
 grade.box <- undergraduate %>%
   ggplot(aes(grade)) +
@@ -192,21 +196,6 @@ grade.box <- undergraduate %>%
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 grade.box
-
-# Plot histogram to view grade distribution.
-grade.hist <- undergraduate %>%
-  ggplot(aes(grade)) +
-  geom_histogram() +
-  labs(title = "Histogram of Numerical Grade Distribution",
-       x = "Numerical Grade (%)",
-       y = "Count") +
-  theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5))
-grade.hist
-
-# Use summary to view grade distribution.
-undergraduate %>%
-  summary()
 ```
 
 # 3. Are there any obvious clusters in the grade variable? i.e. more marks around 50%.
@@ -222,6 +211,17 @@ grade.density <- undergraduate %>%
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 grade.density
+
+# Plot histogram to view grade distribution.
+grade.hist <- undergraduate %>%
+  ggplot(aes(grade)) +
+  geom_histogram() +
+  labs(title = "Histogram of Numerical Grade Distribution",
+       x = "Numerical Grade (%)",
+       y = "Count") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+grade.hist
 ```
 
 # 4. What is the pass rate for the 1st and 2nd year courses for each year? Are there any differences between A1 and A2?
