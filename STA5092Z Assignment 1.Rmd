@@ -145,7 +145,7 @@ passing.codes <- c("UP","PA")
 undergraduate <- undergraduate %>%
   mutate(grade = ifelse(grade %in% failing.codes, 0,
                         ifelse(grade %in% passing.codes, 50, 
-                               ifelse(grepl("^[0-9]+A$", grade),50,grade)))
+                               ifelse(grepl("^[0-9]+A$", grade),0,grade)))
   )
 
 # Convert grade to numerical type.
@@ -456,13 +456,13 @@ p.pass.rate
 ```{r}
 # Identify students who faced challenges in earlier years.
 challenged.first.year <- undergraduate %>%
-  filter(year %in% c(2015, 2016, 2017) & code %in% c("DPR", "INC", "AB")) %>% 
-  select(year, course, grade, id)
+  filter(year %in% c(2015, 2016, 2017) & code %in% failing.codes) %>% 
+  select(year, course, grade, id, code)
 
 # Identify students who excelled in subsequent years.
 excelled.subsequent.years <- undergraduate %>%
   filter(year %in% c(2018, 2019, 2020, 2021, 2022) & grade >= 50) %>% 
-  select(year, course, grade, id)
+  select(year, course, grade, id, code)
 
 # Find students who faced challenges in the first year but later excelled.
 resilient.students <- inner_join(challenged.first.year, excelled.subsequent.years, by = "id", suffix = c(".challenged", ".excelled"))
