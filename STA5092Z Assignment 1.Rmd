@@ -326,12 +326,12 @@ quantile(a1.a2.b1.joined$a.grade[a1.a2.b1.joined$grade.y >= 50], 0.25, na.rm = T
 
 ```{r}
 # Filter to only B1 and B2 courses.
-b1.b2 <- undergraduate %>% 
+b12 <- undergraduate %>% 
   filter(course %in% c("B1", "B2"))
 
 # Join data to link B1 and B2 grades by student.
-b1.b2.joined <- merge(subset(b1.b2, course=="B1"), 
-                   subset(b1.b2, course=="B2"),
+b1.b2.joined <- merge(subset(b12, course=="B1"), 
+                   subset(b12, course=="B2"),
                    by="id")
 
 # Identify the minimum B1 grade passed by 75% of students who passed B2.
@@ -365,14 +365,14 @@ cat("Percentage of students who passed B1 and B2 after having a UP for A1 or A2:
 
 ```{r}
 # Separate the grades for 1st and 2nd year courses.
-a1.b1 <- undergraduate %>% 
-  filter(course %in% c("A1", "B1"))
-a2.b2 <- undergraduate %>% 
-  filter(course %in% c("A2", "B2"))
+a12 <- undergraduate %>% 
+  filter(course %in% c("A1", "A2"))
+b12 <- undergraduate %>% 
+  filter(course %in% c("B1", "B2"))
 
 # Join data to link 1st and 2nd year grades by student.
-merged.joined <- merge(a1.b1, 
-                       a2.b2, 
+merged.joined <- merge(a12, 
+                       b12, 
                        by = "id", 
                        suffixes = c(".first", ".second"))
 
@@ -387,20 +387,22 @@ cat("Correlation between the grades of 1st and 2nd year courses:", round(correla
 ```{r}
 # Compare pass rates between years.
 pass.rates.comparison <- undergraduate %>%
-  group_by(course, year) %>%
+  group_by(year) %>%
   summarise(mean.pass.rate = mean(grade >= 50) * 100)
 pass.rates.comparison
 
 # Plot the comparison.
-pass.rates.comparison %>% 
+plot.pass.rates.comparison <- pass.rates.comparison %>% 
   ggplot(aes(x = as.factor(year), y = mean.pass.rate, fill = as.factor(year == 2020))) +
   geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = round(mean.pass.rate, 1), vjust = 1.5, hjust = 0.5), position = position_dodge(width = 0.9), color = "white") +
   scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "grey"), guide = "none") +
   labs(title = "Pass Rates Comparison - Covid Year vs Non-Covid Years",
        x = "Year",
        y = "Average Pass Rate (%)") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
+plot.pass.rates.comparison
 ```
 
 # 11. What kind of an informed suggestion/advice one can make to a student who is registering for A1 or A2 for the first time? What would you look at to decide from the very beginning that the student will be successful in these courses?
