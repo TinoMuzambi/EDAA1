@@ -328,12 +328,12 @@ quantile(a1.a2.b1.joined$a.grade[a1.a2.b1.joined$grade.y >= 50], 0.25, na.rm = T
 
 ```{r}
 # Filter to only B1 and B2 courses.
-b1.b2 <- undergraduate %>% 
+b12 <- undergraduate %>% 
   filter(course %in% c("B1", "B2"))
 
 # Join data to link B1 and B2 grades by student.
-b1.b2.joined <- merge(subset(b1.b2, course=="B1"), 
-                   subset(b1.b2, course=="B2"),
+b1.b2.joined <- merge(subset(b12, course=="B1"), 
+                   subset(b12, course=="B2"),
                    by="id")
 
 # Identify the minimum B1 grade passed by 75% of students who passed B2.
@@ -367,14 +367,12 @@ cat("Percentage of students who passed B1 and B2 after having a UP for A1 or A2:
 
 ```{r}
 # Separate the grades for 1st and 2nd year courses.
-a1.b1 <- undergraduate %>% 
-  filter(course %in% c("A1", "B1"))
-a2.b2 <- undergraduate %>% 
-  filter(course %in% c("A2", "B2"))
+a12 <- undergraduate %>% 
+  filter(course %in% c("A1", "A2"))
 
 # Join data to link 1st and 2nd year grades by student.
-merged.joined <- merge(a1.b1, 
-                       a2.b2, 
+merged.joined <- merge(a12, 
+                       b12, 
                        by = "id", 
                        suffixes = c(".first", ".second"))
 
