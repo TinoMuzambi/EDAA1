@@ -389,20 +389,24 @@ cat("Correlation between the grades of 1st and 2nd year courses:", round(correla
 ```{r}
 # Compare pass rates between years.
 pass.rates.comparison <- undergraduate %>%
-  group_by(course, year) %>%
-  summarise(mean.pass.rate = mean(grade >= 50) * 100)
+  group_by(year) %>%
+  summarise(mean.pass.rate = mean(grade >= 50, na.rm = TRUE) * 100)
 pass.rates.comparison
 
 # Plot the comparison.
-pass.rates.comparison %>% 
+plot.pass.rates.comparison <- pass.rates.comparison %>% 
   ggplot(aes(x = as.factor(year), y = mean.pass.rate, fill = as.factor(year == 2020))) +
   geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = round(mean.pass.rate, 1), group = as.factor(year == 2020)),
+            position = position_dodge(width = 0.9),
+            vjust = -0.5) +
   scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "grey"), guide = "none") +
   labs(title = "Pass Rates Comparison - Covid Year vs Non-Covid Years",
        x = "Year",
        y = "Average Pass Rate (%)") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
+plot.pass.rates.comparison
 ```
 
 # 11. What kind of an informed suggestion/advice one can make to a student who is registering for A1 or A2 for the first time? What would you look at to decide from the very beginning that the student will be successful in these courses?
