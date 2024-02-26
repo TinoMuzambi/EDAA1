@@ -240,6 +240,7 @@ pass.rates.first.second
 # Plot the results.
 ggplot(pass.rates.first.second, aes(x = as.factor(year), y = perc.pass, fill = first.second)) +
   geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = round(perc.pass, 1), vjust = 1.5, hjust = 0.5), position = position_dodge(width = 0.9), color = "white") +
   labs(title = "Pass Rates for 1st and 2nd Year Courses Grouped by Year",
        x = "Year",
        y = "Percentage of Students Passing (%)",
@@ -261,6 +262,7 @@ pass.rates.a12
 # Plot the results.
 ggplot(pass.rates.a12, aes(x = as.factor(year), y = perc.pass, fill = course)) +
   geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = round(perc.pass, 1), vjust = 1.5, hjust = 0.5), position = position_dodge(width = 0.9), color = "white") +
   labs(title = "Pass Rates for A1 and A2 Courses Grouped by Year",
        x = "Year",
        y = "Percentage of Students Passing (%)",
