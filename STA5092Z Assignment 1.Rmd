@@ -179,8 +179,8 @@ n.students <- nrow(students.pass.both)
 perc.students <- n.students / nrow(undergraduate) * 100
 
 # Print results 
-print(paste0("Number of students passing both: ", n.students))
-print(paste0("Percentage of students: ", round(perc.students, 2), "%"))
+cat("Number of students passing both:", n.students)
+cat("Percentage of students:", round(perc.students, 2), "%")
 ```
 
 # 2. Are there any outliers in the grade variable? What is your definition of an outlier?
