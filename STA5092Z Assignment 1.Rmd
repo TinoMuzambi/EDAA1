@@ -158,22 +158,29 @@ str(undergraduate)
 # 1. What is the total number and percentage of students for each year who pass both the 1st and the 2nd year courses in the same year?
 
 ```{r}
-# Group data by year and find unique students who pass both the 1st and the 2nd year courses in the same year.
-pass.both <- undergraduate %>%
-  group_by(year) %>%
-  mutate(total.number = n()) %>%
-  filter(grade >= 50) %>%
-  distinct(id, .keep_all = TRUE) %>%
-  summarise(total.pass = n(), perc.pass = (n() / first(total.number)) * 100)
-pass.both
+# Filter by passing and group by student ID and year
+by.student <- undergraduate %>% 
+  filter(grade >= 50) %>% 
+  group_by(id, year) %>%
+  summarise(
+    num.a12 = sum(course %in% c("A1", "A2")),
+    num.b1 = sum(course == "B1"),
+    num.b2 = sum(course == "B2")
+  )
 
-# Plot the results.
-ggplot(pass.both, aes(x = as.factor(year), y = perc.pass)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(title = "Percentage of Students Passing Both 1st and 2nd Year Courses",
-       x = "Year",
-       y = "Percentage of Students Passing (%)") +
-  theme(plot.title = element_text(hjust = 0.5))
+# Filter to students passing both in same year 
+students.pass.both <- by.student %>%
+  filter(num.a12 >= 1 & num.b1 >= 1 & num.b2 >= 1)
+
+# Overall count
+n.students <- nrow(students.pass.both) 
+
+# Percentage 
+perc.students <- n.students / nrow(undergraduate) * 100
+
+# Print results 
+print(paste0("Number of students passing both: ", n.students))
+print(paste0("Percentage of students: ", round(perc.students, 2), "%"))
 ```
 
 # 2. Are there any outliers in the grade variable? What is your definition of an outlier?
