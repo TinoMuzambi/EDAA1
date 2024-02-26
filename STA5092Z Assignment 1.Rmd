@@ -423,9 +423,10 @@ degree.analysis
 
 # Plot the average grade.
 p.mean.grade <- degree.analysis %>% 
-  ggplot(aes(x = as.factor(year), y = mean.grade, color = degree)) +
+  ggplot(aes(x = as.factor(year), y = mean.grade)) +
   geom_point() +
   geom_line(aes(group = degree)) +
+  scale_y_continuous(limits = c(0, 100)) + 
   facet_wrap(~degree, scales = "free_y") +
   labs(title = "Average Grade for Different Degrees Grouped by Year",
        x = "Year",
@@ -437,8 +438,9 @@ p.mean.grade
 
 # Plot the pass rate.
 p.pass.rate <- degree.analysis %>% 
-  ggplot(aes(x = as.factor(year), y = pass.rate, fill = degree)) +
+  ggplot(aes(x = as.factor(year), y = pass.rate)) +
   geom_bar(stat = "identity", position = "dodge") +
+  scale_y_continuous(limits = c(0, 100)) + 
   facet_wrap(~degree, scales = "free_y") +
   labs(title = "Pass Rates for Different Degrees Grouped by Year",
        x = "Year",
