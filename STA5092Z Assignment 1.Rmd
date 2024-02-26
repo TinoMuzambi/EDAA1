@@ -244,6 +244,7 @@ plot.pass.rates.first.second <- ggplot(pass.rates.first.second, aes(x = as.facto
   scale_fill_manual(values = c("First" = "blue", "Second" = "red"), name = "Course Year") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
+plot.pass.rates.first.second
 
 # Calculate pass rate for A1 and A2 group by year.
 pass.rates.a12 <- undergraduate %>%
@@ -266,6 +267,7 @@ plot.pass.rates.a12 <- ggplot(pass.rates.a12, aes(x = as.factor(year), y = perc.
   scale_fill_manual(values = c("A1" = "blue", "A2" = "red")) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
+plot.pass.rates.a12
 ```
 
 # 5. How many students fail B1 even if they pass A1 or A2?
