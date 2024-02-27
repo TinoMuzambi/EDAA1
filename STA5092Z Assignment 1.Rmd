@@ -19,6 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, echo=FALSE}
 #install.packages("tidyverse")
+#install.packages("naniar")
 library(tidyverse)
 library(naniar)
 ```
@@ -480,4 +481,3 @@ resilient.students.mean.grade <- resilient.students %>%
   summarise(mean.grade = mean(grade.excelled))
 resilient.students.mean.grade
 ```
-
