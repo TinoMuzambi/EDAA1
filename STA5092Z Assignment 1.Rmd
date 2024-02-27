@@ -418,14 +418,7 @@ plot.pass.rates.comparison <- pass.rates.comparison %>%
 plot.pass.rates.comparison
 ```
 
-# 11. What kind of an informed suggestion/advice one can make to a student who is registering for A1 or A2 for the first time? What would you look at to decide from the very beginning that the student will be successful in these courses?
-
-```{r}
-
-```
-
 # 12. Are there any patterns or trends in the academic progress of students across different degrees over the years?
-# Extended degree vs normal students. Who passes better? Grade disparity. Failing better.
 
 ```{r}
 # Group data by year and degree, calculate average grade and pass rates.
