@@ -170,7 +170,13 @@ by.student <- undergraduate %>%
 
 # Filter to students passing both in same year 
 students.pass.both <- by.student %>%
-  filter(num.a12 >= 1 & num.b1 >= 1 & num.b2 >= 1)
+  filter(num.a12 >= 1 & num.b1 >= 1 & num.b2 >= 1) %>% 
+  arrange(year)
+
+# Get full data for these students for the relevant years.
+students.pass.both.data <- undergraduate %>% 
+  filter(id %in% students.pass.both$id & year %in% students.pass.both$year) %>% 
+  arrange(id)
 
 # Overall count
 n.students <- nrow(students.pass.both) 
@@ -179,8 +185,8 @@ n.students <- nrow(students.pass.both)
 perc.students <- n.students / nrow(undergraduate) * 100
 
 # Print results 
-cat("Number of students passing both:", n.students)
-cat("Percentage of students:", round(perc.students, 2), "%")
+cat("\nNumber of students passing both:", n.students, "\n")
+cat("Percentage of students:", round(perc.students, 2), "%\n")
 ```
 
 # 2. Are there any outliers in the grade variable? What is your definition of an outlier?
@@ -419,6 +425,7 @@ plot.pass.rates.comparison
 ```
 
 # 12. Are there any patterns or trends in the academic progress of students across different degrees over the years?
+# Extended degree vs normal students. Who passes better? Grade disparity. Failing better.
 
 ```{r}
 # Group data by year and degree, calculate average grade and pass rates.
