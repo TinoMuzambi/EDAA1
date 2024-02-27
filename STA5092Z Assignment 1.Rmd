@@ -481,5 +481,10 @@ excelled.subsequent.years <- undergraduate %>%
 # Find students who faced challenges in the first year but later excelled.
 resilient.students <- inner_join(challenged.first.year, excelled.subsequent.years, by = "id", suffix = c(".challenged", ".excelled"))
 resilient.students
+
+# Calculate resilient students mean grade.
+resilient.students.mean.grade <- resilient.students %>% 
+  summarise(mean.grade = mean(grade.excelled))
+resilient.students.mean.grade
 ```
 
