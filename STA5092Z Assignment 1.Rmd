@@ -12,10 +12,10 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Libraries
+# Libraries - Install tidyverse and naniar if not already installed.
 
 ```{r, echo=FALSE}
 #install.packages("tidyverse")
