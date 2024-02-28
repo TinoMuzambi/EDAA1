@@ -1,6 +1,6 @@
 ---
 title: "STA5092Z Assignment 1"
-author: "Tino Muzambi"
+author: "Tino Muzambi - MZMTIN002"
 date: "`r Sys.Date()`"
 output:
   pdf_document:
