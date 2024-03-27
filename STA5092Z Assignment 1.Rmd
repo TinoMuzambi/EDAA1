@@ -1,6 +1,6 @@
 ---
 title: "STA5092Z Assignment 1"
-author: "Tino Muzambi"
+author: "Tino Muzambi - MZMTIN002"
 date: "`r Sys.Date()`"
 output:
   pdf_document:
@@ -12,10 +12,10 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Libraries
+# Libraries - Install tidyverse and naniar if not already installed.
 
 ```{r, echo=FALSE}
 #install.packages("tidyverse")
